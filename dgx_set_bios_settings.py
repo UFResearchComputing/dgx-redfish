@@ -31,6 +31,7 @@ def set_bios_settings(nodes, username, password, settings_file):
         nodes: A list of IPs or Hostnames for DGX node Redfish interfaces.
         username: Redfish API username.
         password: Redfish API password for the given username.
+        settings_file: BIOS settings file to apply.
 
     Raises:
         Exception: An error occurred applying the BIOS settings.
