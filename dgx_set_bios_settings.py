@@ -20,6 +20,7 @@ Call's the given node's Redfish API and sets it's BIOS settings.
 Takes in a file with the BIOS settings to apply.
 """
 
+import traceback
 import argparse
 import redfish
 
@@ -56,25 +57,34 @@ def set_bios_settings(nodes, username, password, settings_file):
     for node in nodes:
         print("Setting bios settings for node: " + node)
 
-        # make a connection to the redfish api and login
-        redfish_cxn = redfish.redfish_client(base_url='https://' + node,
-                                             username=username,
-                                             timeout=60,
-                                             password=password,
-                                             default_prefix='/redfish/v1')
-        redfish_cxn.login(auth='session')
+        try:
+            # make a connection to the redfish api and login
+            redfish_cxn = redfish.redfish_client(base_url='https://' + node,
+                                                 username=username,
+                                                 timeout=60,
+                                                 password=password,
+                                                 default_prefix='/redfish/v1')
+            redfish_cxn.login(auth='session')
 
-        # set the bios settings
-        headers = {"If-Match": "*", "Content-Type": "application/json"}
-        redfish_response = redfish_cxn.patch('/redfish/v1/Systems/Self/Bios/SD',
-                                             headers=headers,
-                                             body=bios_settings)
+            # set the bios settings
+            headers = {"If-Match": "*", "Content-Type": "application/json"}
+            redfish_response = redfish_cxn.patch('/redfish/v1/Systems/Self/Bios/SD',
+                                                 headers=headers,
+                                                 body=bios_settings)
 
-        if redfish_response.status != 204:
-            raise Exception("Error setting bios settings for node: " + node +
-                            ". Redfish response: " + str(redfish_response))
+            if redfish_response.status != 204:
+                raise Exception("Error setting bios settings for node: " + node +
+                                ". Redfish response: " + str(redfish_response))
 
-        print("Successfully set bios settings for node: " + node)
+            print("Successfully set bios settings for node: " + node)
+        except Exception: # pylint: disable=broad-except
+            print("An error occurred setting bios settings for node: " + node)
+            traceback.print_exc()
+        finally:
+            try:
+                redfish_cxn.logout()
+            except Exception: # pylint: disable=broad-except
+                pass
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Set DGX Bios settings.')

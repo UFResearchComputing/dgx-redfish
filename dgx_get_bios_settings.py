@@ -20,6 +20,7 @@ Call's the given node's Redfish API and queries for it's BIOS settings.
 If successfull the BIOS settings are printed to the screen.
 """
 
+import traceback
 import argparse
 import redfish
 
@@ -39,22 +40,31 @@ def get_bios_settings(node, username, password):
         Exception: An error occurred obtaining the BIOS settings.
     """
 
-    # make a connection to the redfish api and login
-    redfish_cxn = redfish.redfish_client(base_url='https://' + node,
-                                         username=username,
-                                         timeout=60,
-                                         password=password,
-                                         default_prefix='/redfish/v1')
-    redfish_cxn.login(auth='session')
+    try:
+        # make a connection to the redfish api and login
+        redfish_cxn = redfish.redfish_client(base_url='https://' + node,
+                                             username=username,
+                                             timeout=60,
+                                             password=password,
+                                             default_prefix='/redfish/v1')
+        redfish_cxn.login(auth='session')
 
-    # get the bios settings
-    redfish_response = redfish_cxn.get('/redfish/v1/Systems/Self/Bios', None)
+        # get the bios settings
+        redfish_response = redfish_cxn.get('/redfish/v1/Systems/Self/Bios', None)
 
-    if redfish_response.status != 200:
-        raise Exception("Error getting bios settings for node: " + node +
-                        ". Redfish response: " + str(redfish_response))
+        if redfish_response.status != 200:
+            raise Exception("Error getting bios settings for node: " + node +
+                            ". Redfish response: " + str(redfish_response))
 
-    return redfish_response.dict['Attributes']
+        return redfish_response.dict['Attributes']
+    except Exception: # pylint: disable=broad-except
+        print("An error occurred getting bios settings for node: " + node)
+        traceback.print_exc()
+    finally:
+        try:
+            redfish_cxn.logout()
+        except Exception: # pylint: disable=broad-except
+            pass
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get DGX Bios settings.')
@@ -70,5 +80,6 @@ if __name__ == '__main__':
 
     bios_settings = get_bios_settings(args.node, args.username, args.password)
 
-    for key, value in bios_settings.items():
-        print(key + ": " + str(value))
+    if bios_settings:
+        for key, value in bios_settings.items():
+            print(key + ": " + str(value))
