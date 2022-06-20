@@ -21,6 +21,7 @@ Call's the given node's Redfish API and sets it's boot once source setting.
 
 import traceback
 import argparse
+import getpass
 import redfish
 
 def set_boot_source(nodes, username, password, boot_source):
@@ -95,11 +96,11 @@ if __name__ == '__main__':
                         required=True, help='DGX Redfish IP or Hostname')
     parser.add_argument('-u', '--username', type=str, action='store',
                         required=True, help='DGX Redfish username')
-    parser.add_argument('-p', '--password', type=str, action='store',
-                        required=True, help='DGX Redfish password')
     parser.add_argument('-s', '--boot_source', type=str, action='store',
                         choices=["Pxe", "Cd", "Usb", "Hdd", "BiosSetup"],
                         required=True, help='Boot source')
     args = parser.parse_args()
 
-    set_boot_source(args.nodes, args.username, args.password, args.boot_source)
+    redfish_password = getpass.getpass()
+
+    set_boot_source(args.nodes, args.username, redfish_password, args.boot_source)

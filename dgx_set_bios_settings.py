@@ -22,6 +22,7 @@ Takes in a file with the BIOS settings to apply.
 
 import traceback
 import argparse
+import getpass
 import redfish
 
 def set_bios_settings(nodes, username, password, settings_file):
@@ -92,10 +93,10 @@ if __name__ == '__main__':
                         required=True, help='DGX Redfish IP or Hostname')
     parser.add_argument('-u', '--username', type=str, action='store',
                         required=True, help='DGX Redfish username')
-    parser.add_argument('-p', '--password', type=str, action='store',
-                        required=True, help='DGX Redfish password')
     parser.add_argument('-f', '--file', type=str, action='store',
                         required=True, help='BIOS settings in file format')
     args = parser.parse_args()
 
-    set_bios_settings(args.nodes, args.username, args.password, args.file)
+    redfish_password = getpass.getpass()
+
+    set_bios_settings(args.nodes, args.username, redfish_password, args.file)

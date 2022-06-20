@@ -22,6 +22,7 @@ If successfull the BIOS settings are printed to the screen.
 
 import traceback
 import argparse
+import getpass
 import redfish
 
 def get_bios_settings(node, username, password):
@@ -72,13 +73,13 @@ if __name__ == '__main__':
                         required=True, help='DGX Redfish IP or Hostname')
     parser.add_argument('-u', '--username', type=str, action='store',
                         required=True, help='DGX Redfish username')
-    parser.add_argument('-p', '--password', type=str, action='store',
-                        required=True, help='DGX Redfish password')
     args = parser.parse_args()
+
+    redfish_password = getpass.getpass()
 
     print("Getting bios settings for node: " + args.node)
 
-    bios_settings = get_bios_settings(args.node, args.username, args.password)
+    bios_settings = get_bios_settings(args.node, args.username, redfish_password)
 
     if bios_settings:
         for key, value in bios_settings.items():

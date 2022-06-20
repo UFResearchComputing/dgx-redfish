@@ -27,9 +27,9 @@ Usage
 ----------
 ```bash
 $ python <script>.py --help
-$ python dgx_get_bios_settings.py -n <dgx redfish interface> -u <dgx redfish username> -p <dgx redfish password>
-$ python dgx_set_bios_settings.py -n <dgx redfish interface1> <dgx redfish interface2> -u <dgx redfish username> -p <dgx redfish password> -f <dgx bios file>
-$ python dgx_set_boot_once.py -n <dgx redfish interface1> <dgx redfish interface2> -u <dgx redfish username> -p <dgx redfish password> -s <Pxe, Usb, Cd, Hdd, BiosSetup>
+$ python dgx_get_bios_settings.py -n <dgx redfish interface> -u <dgx redfish username>
+$ python dgx_set_bios_settings.py -n <dgx redfish interface1> <dgx redfish interface2> -u <dgx redfish username> -f <dgx bios file>
+$ python dgx_set_boot_once.py -n <dgx redfish interface1> <dgx redfish interface2> -u <dgx redfish username> -s <Pxe, Usb, Cd, Hdd, BiosSetup>
 ```
 
 Copyright and License
