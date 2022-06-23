@@ -90,7 +90,7 @@ def set_bios_settings(nodes, username, password, settings_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Set DGX Bios settings.')
     parser.add_argument('-n', '--nodes', nargs='+',
-                        required=True, help='DGX Redfish IP or Hostname')
+                        required=True, help='DGX Redfish IPs or Hostnames')
     parser.add_argument('-u', '--username', type=str, action='store',
                         required=True, help='DGX Redfish username')
     parser.add_argument('-f', '--file', type=str, action='store',
